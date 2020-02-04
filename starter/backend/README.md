@@ -72,9 +72,12 @@ This README is missing documentation of your endpoints. Below is an example for 
 
 Endpoints
 GET '/categories'
-GET ...
-POST ...
-DELETE ...
+GET '/questions'
+DELETE '/questions/<int:question_id>'
+POST '/add'
+POST '/questions'
+GET '/categories/<int:category_id>/questions'
+POST '/quizzes'
 
 GET '/categories'
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
@@ -86,6 +89,59 @@ GET '/categories'
 '4' : "History",
 '5' : "Entertainment",
 '6' : "Sports"}
+
+GET '/questions'
+- Fetches either all questions or questions based on category
+- Request Arguments: category_id, if category_id is not given it is None
+- Returns: An object with four keys: questions, total_questions, current_category, and categories
+{'questions': [
+    {'id': 20, 'question': 'What is the heaviest organ in the human body?', 'answer': 'The Liver', 'category': 1, 'difficulty': 4}, 
+    {'id': 21, 'question': 'Who discovered penicillin?', 'answer': 'Alexander Fleming', 'category': 1, 'difficulty': 3}, 
+    {'id': 22, 'question': 'Hematology is a branch of medicine involving the study of what?', 'answer': 'Blood', 'category': 1, 'difficulty': 4}], 
+'total_questions': 3, 
+'current_category': 'Science', 
+'categories': ['Science', 'Art', 'Geography', 'History', 'Entertainment', 'Sports']}
+
+DELETE '/questions/<int:question_id>'
+- Deletes a question based on question_id
+- Request Arguments: question_id
+- Returns: An object with a single key, success, value is True if deletion is completed.
+{'success': True}
+
+POST '/add'
+- Takes in four data fields --question, answer, difficulty, and category-- from FormView.js and adds to database a new trivia question. If question or answer is left blank an error is raised.
+- Request Arguments: None
+- Returns: An object with a single key, success, value is True if question is created.
+{'success': True}
+
+POST '/questions'
+- Takes in a data field, searchTerm, and displays questions which include that searchTerm.
+- Request Arguments: None
+- Returns: an object with three keys: questions, total_questions, current_category.
+{'questions': [
+    {'answer': 'Muhammad Ali', 'category': 4, 'difficulty': 1, 'id': 9, 'question': "What boxer's original name is C assius Clay?"}, {'answer': 'Apollo 13', 'category': 5, 'difficulty': 4, 'id': 2, 'question': 'What movie earned Tom Hanks his third straight Oscar nomination, in 1996?'}], 
+'total_questions': 2,
+'current_category': None}
+
+GET '/categories/<int:category_id>/questions'
+- Retrieves questions by category.
+- Request Arguments: category_id
+- Returns: An object with four keys: success, questions, total_questions, and current_category
+{'success': True, 
+'questions': [
+    {'answer': 'The Liver', 'category': 1, 'difficulty': 4, 'id': 20, 'question': 'What is the heaviest organ in the human body?'}],
+'total_questions': 1,
+'current_category': 'Science'}
+
+POST '/quizzes'
+- Plays a trivia game by fetching questions and checking answers given against them.
+- Request Arguments: None
+- Returns: An object with three keys: question, guess, and previousQuestions
+{'question': {
+    'answer': 'Alexander Fleming', 'category': 1, 'difficulty': 3, 'id': 21, 'question': 'Who discovered penicillin?'},
+'guess': 'fake',
+'previousQuestions': [
+    {'answer': 'fake answer', 'category': '1', 'difficulty': '1', 'question': 'fake question'}]}
 
 ```
 

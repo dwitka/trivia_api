@@ -19,13 +19,12 @@ def create_app(test_config=None):
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     def paginate_questions(request, questions):
+        # return 10 questions per page
         page = request.args.get('page', 1, type=int)
         start = (page - 1) * QUESTIONS_PER_PAGE
         end = start + QUESTIONS_PER_PAGE
-
         formatted_questions = [question.format() for question in questions]
         current_questions = formatted_questions[start:end]
-
         return current_questions
 
     # @TODO: Use the after_request decorator to set Access-Control-Allow
@@ -61,15 +60,17 @@ def create_app(test_config=None):
     # update the questions.
     @app.route('/questions', methods=['GET'])
     def getQuestions(category_id=None):
+        # retrieve all questions
         if category_id is None:
             category = None
             questions = Question.query.all()
             formatted_questions = [question.format() for question in questions]
             questions = formatted_questions[:]
+        # retrieve questions by category
         else:
             category = Category.query.get(category_id).type
             questions = Question.query.filter(
-              Question.category == category_id).all()
+                Question.category == category_id).all()
             questions = paginate_questions(request, questions)
         return jsonify({'questions': questions,
                         'total_questions': len(questions),
@@ -164,17 +165,17 @@ def create_app(test_config=None):
             previous_questions = data['previous_questions']
             quiz_category = data['quiz_category']
             category = quiz_category['id']
-
+            # return all questions or questions by category
             if quiz_category['type'] == 'click':
                 questions = getQuestions().json['questions']
             else:
                 questions = getByCategory(category).json['questions']
-
+            # if questions run out force program end
             if len(questions) == len(previous_questions):
                 return jsonify({'forceEnd': True})
             else:
                 question = random.choice(questions)
-
+            # choose the next random question
             while question['id'] in previous_questions:
                 question = random.choice(questions)
             else:
